@@ -274,17 +274,26 @@ class AkkaServerless {
         res.setServiceName(component.serviceName);
         res.setComponentType(component.componentType());
 
-        const entity = new discovery_messages.EntitySettings();
-        entity.setEntityType(component.options.entityType);
-        if (component.options.entityPassivationStrategy) {
-          const ps = new discovery_messages.PassivationStrategy();
-          const tps = new discovery_messages.TimeoutPassivationStrategy();
-          tps.setTimeout(component.options.entityPassivationStrategy.timeout);
-          ps.setTimeout(tps);
-          entity.setPassivationStrategy(ps);
+        if (component.options.entityType) {
+          const entity = new discovery_messages.EntitySettings();
+          entity.setEntityType(component.options.entityType);
+          if (component.options.entityPassivationStrategy) {
+            const ps = new discovery_messages.PassivationStrategy();
+            const tps = new discovery_messages.TimeoutPassivationStrategy();
+            tps.setTimeout(component.options.entityPassivationStrategy.timeout);
+            ps.setTimeout(tps);
+            entity.setPassivationStrategy(ps);
+          }
+          entity.setForwardHeadersList(component.options.forwardHeaders);
+          res.setEntity(entity);
+        } else {
+          const componentSettings =
+            new discovery_messages.GenericComponentSettings();
+          componentSettings.setForwardHeadersList(
+            component.options.forwardHeaders,
+          );
+          res.setComponent(componentSettings);
         }
-
-        res.setEntity(entity);
 
         return res;
       });

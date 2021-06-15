@@ -15,6 +15,7 @@
  */
 
 const should = require('chai').should();
+const expect = require('chai').expect;
 const AkkaServerless = require('../src/akkaserverless');
 const discovery = require('../proto/akkaserverless/protocol/discovery_pb');
 
@@ -137,6 +138,7 @@ At package.test.json:2:4:
       options: {
         includeDirs: ['./test'],
         entityType: 'my-entity-type',
+        forwardHeaders: ['x-my-header'],
       },
       componentType: () => {
         return 'my-type';
@@ -154,6 +156,9 @@ At package.test.json:2:4:
     comp.getComponentType().should.equal('my-type');
     comp.getEntity().getEntityType().should.equal('my-entity-type');
     should.equal(comp.getEntity().getPassivationStrategy(), undefined);
+    expect(comp.getEntity().getForwardHeadersList()).to.have.same.members([
+      'x-my-header',
+    ]);
   });
 
   it('discovery service should return correct components with passivation', () => {
