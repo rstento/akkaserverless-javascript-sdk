@@ -1,5 +1,5 @@
 {
   "extension": ["js", "ts"],
-  "spec": ["test/**/*.test.ts", "test/**/*-test.js"],
+  "spec": ["test/static-protobuf-any.test.ts"],
   "require": "ts-node/register"
 }

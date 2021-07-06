@@ -15,11 +15,15 @@
  */
 
 import Long from 'long';
+import * as chai from 'chai';
 import {
   StaticAnySupport,
   serialize,
   deserialize,
 } from '../src/static-protobuf-any';
+import { Example } from './proto/example_pb';
+
+const should = chai.should();
 // const should = require('chai').should();
 // const protobuf = require('protobufjs');
 // const path = require('path');
@@ -48,71 +52,70 @@ describe('AnySupport', () => {
     deserialize(serialized)?.should.equal('');
   });
 
-  // it('should support serializing long', () => {
-  //   const value = Long.fromNumber(2789);
-  //   const serialized = serialize(value, true, false);
-  //   serialized.getTypeUrl().should.equal('p.akkaserverless.com/int64');
-  //   deserialize(serialized).should.eql(value);
-  // });
+  it('should support serializing long', () => {
+    const value = Long.fromNumber(2789);
+    const serialized = serialize(value, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/int64');
+    deserialize(serialized)?.should.eql(value);
+  });
 
-  // it('should support serializing zero long (default)', () => {
-  //   const serialized = serialize(Long.fromNumber(0), true, false);
-  //   serialized.getTypeUrl().should.equal('p.akkaserverless.com/int64');
-  //   serialized.getValue().should.have.lengthOf(0); // empty bytes
-  //   deserialize(serialized).should.eql(Long.ZERO);
-  // });
+  it('should support serializing zero long (default)', () => {
+    const serialized = serialize(Long.fromNumber(0), true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/int64');
+    serialized.getValue().should.have.lengthOf(0); // empty bytes
+    deserialize(serialized)?.should.eql(Long.ZERO);
+  });
 
-  // it('should support serializing bytes', () => {
-  //   const bytes = Buffer.from('foo');
-  //   const serialized = AnySupport.serialize(bytes, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/bytes');
-  //   anySupport.deserialize(serialized).should.eql(bytes);
-  // });
+  it('should support serializing bytes', () => {
+    const bytes = Buffer.from('foo');
+    const serialized = serialize(bytes, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/bytes');
+    deserialize(serialized)?.should.eql(bytes);
+  });
 
-  // it('should support serializing empty bytes (default)', () => {
-  //   const bytes = Buffer.alloc(0);
-  //   const serialized = AnySupport.serialize(bytes, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/bytes');
-  //   serialized.value.should.have.lengthOf(0); // empty bytes
-  //   anySupport.deserialize(serialized).should.eql(bytes);
-  // });
+  it('should support serializing empty bytes (default)', () => {
+    const bytes = Buffer.alloc(0);
+    const serialized = serialize(bytes, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/bytes');
+    serialized.getValue().should.have.lengthOf(0); // empty bytes
+    deserialize(serialized)?.should.eql(bytes);
+  });
 
-  // it('should support serializing booleans', () => {
-  //   const serialized = AnySupport.serialize(true, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/bool');
-  //   anySupport.deserialize(serialized).should.equal(true);
-  // });
+  it('should support serializing booleans', () => {
+    const serialized = serialize(true, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/bool');
+    deserialize(serialized)?.should.equal(true);
+  });
 
-  // it('should support serializing false booleans (default)', () => {
-  //   const serialized = AnySupport.serialize(false, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/bool');
-  //   serialized.value.should.have.lengthOf(0); // empty bytes
-  //   anySupport.deserialize(serialized).should.equal(false);
-  // });
+  it('should support serializing false booleans (default)', () => {
+    const serialized = serialize(false, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/bool');
+    serialized.getValue().should.have.lengthOf(0); // empty bytes
+    deserialize(serialized)?.should.equal(false);
+  });
 
-  // it('should support serializing numbers', () => {
-  //   const serialized = AnySupport.serialize(1.2345, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/double');
-  //   anySupport.deserialize(serialized).should.equal(1.2345);
-  // });
+  it('should support serializing numbers', () => {
+    const serialized = serialize(1.2345, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/double');
+    deserialize(serialized)?.should.equal(1.2345);
+  });
 
-  // it('should support serializing zero numbers (default)', () => {
-  //   const serialized = AnySupport.serialize(0, true, false);
-  //   serialized.type_url.should.equal('p.akkaserverless.com/double');
-  //   serialized.value.should.have.lengthOf(0); // empty bytes
-  //   anySupport.deserialize(serialized).should.equal(0);
-  // });
+  it('should support serializing zero numbers (default)', () => {
+    const serialized = serialize(0, true, false);
+    serialized.getTypeUrl().should.equal('p.akkaserverless.com/double');
+    serialized.getValue().should.have.lengthOf(0); // empty bytes
+    deserialize(serialized)?.should.equal(0);
+  });
 
-  // it('should support serializing valid protobufs', () => {
-  //   const obj = {
-  //     field1: 'foo',
-  //     field2: 'bar',
-  //   };
-  //   const serialized = AnySupport.serialize(Example.create(obj), false, false);
-  //   serialized.type_url.should.equal('type.googleapis.com/com.example.Example');
-  //   const deserialized = anySupport.deserialize(serialized);
-  //   deserialized.should.include(obj);
-  // });
+  it('should support serializing valid protobufs', () => {
+    const obj = new Example();
+    obj.setField1('foo');
+    obj.setField2('bar');
+    const serialized = serialize(obj, false, false);
+    serialized.getTypeUrl().should.equal('type.googleapis.com/com.example.Example');
+    const deserialized = deserialize(serialized);
+    deserialized.should.include(obj);
+  });
 
   // it('should not support serializing primitives when false', () => {
   //   (() => AnySupport.serialize('foo', false, false)).should.throw();

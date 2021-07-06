@@ -85,11 +85,11 @@ const primitiveDefaults: Map<string, Message> = new Map<string, Message>([
 
 const primitiveDefaultValues: Map<string, any> = new Map<string, any>([
   ['bool', new wrappers.BoolValue().getValue()],
-  ['bytes', new wrappers.BytesValue().getValue()],
+  ['bytes', Buffer.from(new wrappers.BytesValue().getValue())],
   ['double', new wrappers.DoubleValue().getValue()],
   ['float', new wrappers.FloatValue().getValue()],
   ['int32', new wrappers.Int32Value().getValue()],
-  ['int64', new wrappers.Int64Value().getValue()],
+  ['int64', Long.fromNumber(new wrappers.Int64Value().getValue())],
   ['string', new wrappers.StringValue().getValue()],
   ['uint32', new wrappers.UInt32Value().getValue()],
   ['uint64', new wrappers.UInt64Value().getValue()],
@@ -134,6 +134,11 @@ function serializePrimitive(obj: any, type: string): Any {
     .setValue(serializePrimitiveValue(obj, type));
 }
 
+import * as jspb from 'google-protobuf';
+import { FileDescriptorProto } from 'google-protobuf/google/protobuf/descriptor_pb';
+
+// Problems: https://github.com/protocolbuffers/protobuf/issues/4426
+
 /**
  * Serialize a protobuf object to a google.protobuf.Any.
  *
@@ -165,6 +170,59 @@ export function serialize(
     }
   }
 
+  // const any = new Any();
+  // any.pack(obj.serializeBinary(), )
+  // console.dir(obj);
+  // console.log(typeof obj);
+  // obj.prototype
+  // console.log(obj.prototype.displayName);
+  // console.log(obj.$name);
+  // console.log(obj.$type);
+  // const x: any = jspb;
+  // console.log(x);
+  
+  // jspb.Message.prototype.getJsPbMessageId()
+
+
+  // console.log(Object.keys(obj));
+  // console.log(Object.values(obj));
+  // console.log(obj instanceof jspb.Message)
+  // const ctor = obj.constructor;
+  // console.dir(ctor);
+  // console.dir(ctor());
+  // console.log(ctor.base());
+  // const messageName = ctor.name || ctor.displayName;
+  // console.log(messageName);
+
+// for (var name in ctor.prototype) {
+//   var match = /^get([A-Z]\w*)/.exec(name);
+//   if (match && name != 'getExtension' &&
+//       name != 'getJsPbMessageId') {
+//     var has = 'has' + match[1];
+//     if (!thing[has] || thing[has]()) {
+//       var val = thing[name]();
+//       object[jspb.debug.formatFieldName_(match[1])] = jspb.debug.dump_(val);
+//     }
+//   }
+// }
+
+
+  // console.log(obj.constructor.name);
+  console.dir(obj);
+
+  // console.log(Object.getOwnPropertyDescriptor(obj, 'displayName'));
+  // console.log(Object.getPrototypeOf(obj.constructor));
+  // console.log(obj.name);
+  if (obj.serializeBinary) { // is a protobuf Message
+    // return new Any().getJsPbMessageId
+    //   .setTypeUrl( 'type.googleapis.com/' + obj.constructor.name)
+    //   .setValue(obj.serializeBinary());
+  }
+
+  
+  // Message
+  // if (typeof obj === '')
+  // new Any().pack()
   throw new Error('Implement me');
   //  if (
   //    obj.constructor &&
@@ -245,7 +303,7 @@ function deserializePrimitive(bytes: Uint8Array, type: string) {
     case 'bool':
       return wrappers.BoolValue.deserializeBinary(bytes).getValue();
     case 'bytes':
-      return wrappers.BytesValue.deserializeBinary(bytes).getValue();
+      return Buffer.from(wrappers.BytesValue.deserializeBinary(bytes).getValue());
     case 'double':
       return wrappers.DoubleValue.deserializeBinary(bytes).getValue();
     case 'float':
@@ -253,7 +311,7 @@ function deserializePrimitive(bytes: Uint8Array, type: string) {
     case 'int32':
       return wrappers.Int32Value.deserializeBinary(bytes).getValue();
     case 'int64':
-      return wrappers.Int64Value.deserializeBinary(bytes).getValue();
+      return Long.fromNumber(wrappers.Int64Value.deserializeBinary(bytes).getValue());
     case 'string':
       return wrappers.StringValue.deserializeBinary(bytes).getValue();
     case 'uint32':

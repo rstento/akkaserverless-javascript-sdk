@@ -32,3 +32,24 @@ $PROTOC \
     ${PWD}/proto/akkaserverless/protocol/*.proto \
     ${PWD}/proto/akkaserverless/component/*.proto \
     ${PWD}/proto/akkaserverless/component/*/*.proto
+
+# Statically compile test protobuf
+rm -rf test/proto
+cp -r proto test/proto
+
+OUT_DIR="${PWD}/test/proto"
+TS_OUT_DIR="${PWD}/test/proto"
+IN_DIR="${PWD}/test/proto"
+PROTOC="${PWD}/protoc/bin/protoc"
+PROTOC_GEN_TS_PATH="$(npm bin)/protoc-gen-ts"
+PROTOC_GEN_GRPC_PATH="$(npm bin)/grpc_tools_node_protoc_plugin"
+
+$PROTOC \
+    --proto_path="${PWD}/test/proto" \
+    --proto_path="${PWD}/test/" \
+    --plugin=protoc-gen-ts=$PROTOC_GEN_TS_PATH \
+    --plugin=protoc-gen-grpc=${PROTOC_GEN_GRPC_PATH} \
+    --js_out=import_style=commonjs:$OUT_DIR \
+    --grpc_out=grpc_js:$OUT_DIR \
+    --ts_out=grpc_js:$TS_OUT_DIR \
+    ${PWD}/test/example.proto
