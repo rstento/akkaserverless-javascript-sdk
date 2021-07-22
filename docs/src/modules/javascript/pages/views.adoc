@@ -143,7 +143,7 @@ In the implementation, register the View with `AkkaServerless`:
 include::example$js-customer-registry/customer-event-sourced-view.js[tag=register]
 ----
 
-In the client, use the `addComponent` function to register the View. For example:
+Invoke the `addComponent` function to register the view with the service. For example:
 
 .index.js
 [source,js,indent=0]
